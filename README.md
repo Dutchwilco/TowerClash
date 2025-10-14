@@ -181,8 +181,9 @@ limits:
 1. Use `/tower setup wand` to get the setup tool
 2. Select the arena area with the wand
 3. Run `/tower setup create <arenaId>` to create the arena
-4. Use `/tower setup addpillar` to add pillar locations
-5. Run `/tower setup save` to save the configuration
+4. Use `/tower setup maxplayers <amount>` to add pillars
+5. Use `/tower setup spawn <1,2,3...>` to add pillar locations
+6. Run `/tower setup save` to save the configuration
 
 ### Manual Configuration
 Edit `arenas.yml` directly for advanced setups:
