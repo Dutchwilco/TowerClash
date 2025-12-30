@@ -1,164 +1,162 @@
-# 🏰 TowerClash
+# 🎮 TowerClash - Advanced Minecraft PvP Minigame
 
-**A fast-paced PvP/Survival minigame for Minecraft where players start on isolated pillars and receive random items to eliminate opponents as the world border shrinks.**
+**Version:** 1.3.0  
+**Author:** wilcodwg  
+**Platform:** PaperMC 1.16 - 1.21.4 | Java 21  
 
-[![Java Version](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://www.oracle.com/java/)
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.13--1.21.8-brightgreen.svg)](https://papermc.io/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+---
 
-## 📋 Table of Contents
+## 📖 Overview
 
-- [Overview](#overview)
-- [Features](#features)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Commands & Permissions](#commands--permissions)
-- [Game Mechanics](#game-mechanics)
-- [Arena Setup](#arena-setup)
-- [API & Placeholders](#api--placeholders)
-- [Dependencies](#dependencies)
-- [Building](#building)
-- [Support](#support)
+**TowerClash** is a fast-paced last-player-standing PvP minigame where players spawn on individual pillars and receive random items every few seconds. Use blocks, projectiles, and utilities to eliminate opponents by knocking them into the void!
 
-## 🎮 Overview
+### 🎯 Core Features
 
-TowerClash is a unique Minecraft minigame that combines PvP combat with strategic resource management. Players spawn on individual pillars high above the void and must use randomly distributed items to eliminate their opponents while surviving increasingly dangerous conditions.
+- ⚔️ **Dynamic Item Distribution** - Weighted loot system with configurable drop rates
+- 🏗️ **Schematic-Based Arenas** - Create custom arenas with WorldEdit integration
+- 🌍 **Void World Instancing** - Multiple simultaneous games without world interference
+- 📊 **MySQL/SQLite Statistics** - Track wins, kills, deaths, streaks
+- 🎨 **PlaceholderAPI Integration** - Use stats in other plugins
+- 🏆 **Vote System** - Players vote for game modifiers (Chaos, Double Items, etc.)
+- 👥 **Private Games** - Create custom matches with friends
+- 🔧 **Fully Configurable** - Customize combat, timings, loot, and more
 
-### 🎯 Game Objective
-Be the last player standing! Use blocks, projectiles, utility items, and mob spawners strategically to knock opponents off their pillars or eliminate them through combat.
+---
 
-### 🔄 Game Flow
-1. **Pre-game**: Players join the lobby and wait for the game to start
-2. **Grace Period**: Brief period where PvP is disabled
-3. **Active Phase**: Players receive random items every few seconds via the loot system
-4. **Sudden Death**: World border begins shrinking, forcing players closer together
-5. **Victory**: Last surviving player(s) win and receive rewards
+## 🚀 Quick Start
 
-## ✨ Features
+### Prerequisites
 
-- **🏗️ Dynamic Arena System**: Customizable pillar layouts with circle/grid patterns
-- **📦 Advanced Loot System**: Weighted item distribution with configurable tables
-- **🎮 Multiple Game Modes**: Classic, Chaos, Casual, and variant modes
-- **👥 Flexible Team Sizes**: Solo, duos, or custom team configurations
-- **🔒 Private Games**: Host private matches with full control
-- **📊 Statistics Tracking**: Comprehensive player stats and leaderboards
-- **💰 Economy Integration**: Vault support for rewards and transactions
-- **🏷️ PlaceholderAPI**: Full placeholder support for external plugins
-- **🌍 Multi-Arena Support**: Run multiple concurrent games
-- **⚡ High Performance**: Optimized for minimal server impact
+1. **Paper/Spigot 1.16+** (recommended: 1.21.4)
+2. **Java 21**
+3. **WorldEdit or FastAsyncWorldEdit** (required for arena creation)
+4. **Optional:** Vault, PlaceholderAPI
 
-## 🚀 Installation
+### Installation
 
-1. **Download** the latest release from the releases page
-2. **Place** the TowerClash.jar file in your server's `plugins` folder
-3. **Restart** your server
-4. **Configure** the plugin using the generated configuration files
-5. **Set up** your first arena using the setup commands
+1. Download `TowerClash.jar` and place in `plugins/`
+2. Install **WorldEdit** or **FastAsyncWorldEdit**
+3. Restart server
+4. Configure files in `plugins/TowerClash/`
+5. Create your first arena (see below)
 
-### Requirements
-- **Minecraft Server**: PaperMC 1.13+ (recommended: 1.21+)
-- **Java Version**: Java 17 or higher
-- **Optional Dependencies**: Vault, PlaceholderAPI, WorldEdit, ProtocolLib
+---
 
-## ⚙️ Configuration
+## 🛠️ Arena Setup (Schematic System)
 
-TowerClash uses multiple configuration files for maximum customization:
+TowerClash uses a **schematic-based instancing system** where arenas are saved as files and pasted into a void world for each game.
 
-### Main Configuration (`config.yml`)
-# Database settings (SQLite or MySQL)
+### Step 1: Build Your Arena
+
+1. Build your custom arena in any world
+2. Place pillars where players will spawn (1x1 or 2x2 columns)
+3. Decorate as desired (builds won't be affected by games)
+
+### Step 2: Select & Save
+
+```
+/tower wand
+```
+- You receive a **Golden Axe**
+- **Left-click** a block → Set Position 1 (lowest corner)
+- **Right-click** a block → Set Position 2 (highest corner)
+
+```
+/tower save <arena-name>
+```
+- Saves your selected region as a schematic
+- Stored in: `plugins/TowerClash/schematics/<arena-name>.schem`
+
+### Step 3: Configure Spawns
+
+Edit `plugins/TowerClash/arenas.yml`:
+
+```yaml
+arenas:
+  skyisland:
+    schematic: "skyisland"
+    world: "towerclash_world"
+    spawns:
+      - x: 10, y: 65, z: 10   # Relative coordinates from schematic origin
+      - x: -10, y: 65, z: 10
+      - x: 10, y: 65, z: -10
+      - x: -10, y: 65, z: -10
+    min_players: 2
+    max_players: 4
+    enabled: true
+```
+
+**Important:** Spawn coordinates are **relative** to the schematic paste location!
+
+### Step 4: Test
+
+```
+/tower join skyisland
+```
+
+---
+
+## 🎮 Game Flow
+
+### 1. Pre-Game (Configurable: 15s default)
+- Players join lobby
+- Vote system activates (Chaos Mode, Double Items, etc.)
+- Countdown begins
+
+### 2. Game Start
+- Arena pastes into void world (`towerclash_world`)
+- Players teleport to pillar spawns
+- 5-second grace period
+
+### 3. Active Game
+- **Every 5 seconds:** Players receive 1 random item from loot table
+- Combat begins - knock opponents off pillars
+- Fall into void = elimination
+
+### 4. Sudden Death (After 120s)
+- World border begins shrinking every 10s
+- Forces players closer together
+
+### 5. Game End
+- Winner determined
+- Stats saved to database
+- Arena completely deleted from void world
+- Position freed for next game
+
+---
+
+## ⚙️ Configuration Files
+
+### `config.yml` - General Settings
+```yaml
 database:
-  type: "sqlite"
-  
-# UI Settings
-ui:
-  scoreboard:
-    enabled: true
-  actionbar:
-    enabled: true
-  bossbar:
-    enabled: true
+  type: "SQLITE"  # or MYSQL
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "towerclash"
+    username: "root"
+    password: "password"
 
-# Economy rewards (requires Vault)
-rewards:
-  win: 100.0
-  kill: 10.0
-  participation: 5.0
-### Game Settings (`game.yml`)
-# Player limits and timing
-game:
-  min_players: 2
-  max_players: 16
-  team_size: 1
+world:
+  void_world_name: "towerclash_world"
+  arena_spacing: 256  # Blocks between simultaneous games
+  auto_create_void_world: true
+```
 
+### `game.yml` - Game Mechanics
+```yaml
 timers:
   pregame_seconds: 15
   grace_seconds: 5
   item_interval_seconds: 5
   sudden_death_after_seconds: 120
   border_shrink_every_seconds: 10
-### Loot Tables (`loot.yml`)
-Customize item distribution with weighted entries:
-tables:
-  default:
-    entries:
-      - material: STONE
-        amount: 8
-        weight: 90
-      - material: ENDER_PEARL
-        amount: 1
-        weight: 4
-### Arena Configuration (`arenas.yml`)
-Define arena layouts and pillar patterns:
-arenas:
-  classic_01:
-    world: "towerclash_world"
-    center: [0, 80, 0]
-    pillar:
-      count: 16
-      pattern: "CIRCLE"
-      radius: 22
-      height: 48
-      size: "1x1"
-## 🎯 Commands & Permissions
 
-### Player Commands
-| Command | Description | Permission |
-|---------|-------------|------------|
-| `/tower join [arena]` | Join queue or specific arena | `tower.play` |
-| `/tower leave` | Leave current game or queue | `tower.play` |
-| `/tower stats [player]` | View player statistics | `tower.play` |
-| `/tower private create <arena>` | Create private game | `tower.private` |
+elimination:
+  fall_to_void: true
+  lives: 1
 
-### Admin Commands
-| Command | Description | Permission |
-|---------|-------------|------------|
-| `/tower setup wand` | Get arena setup tool | `tower.admin.setup` |
-| `/tower setup create <id>` | Create new arena | `tower.admin.setup` |
-| `/tower start <gameId>` | Force start game | `tower.admin.start` |
-| `/tower stop <gameId>` | Force stop game | `tower.admin.stop` |
-| `/tower reload` | Reload configurations | `tower.admin.reload` |
-| `/tower loot test <rolls>` | Test loot table | `tower.admin.loot` |
-
-### Permission Nodes
-- `tower.play` - Basic gameplay access (default: true)
-- `tower.private` - Create private games (default: op)
-- `tower.admin` - Full administrative access (default: op)
-
-## 🎲 Game Mechanics
-
-### Loot System
-- **Weighted Distribution**: Items have different spawn chances
-- **Timed Delivery**: Items distributed every X seconds (configurable)
-- **Category Balance**: Mix of blocks, projectiles, utility, and special items
-- **Mode Variants**: Different loot tables for different game modes
-
-### Spawn & Movement System
-- **Centered Pillar Spawning**: Players spawn at the exact center of their pillar (X+0.5, Z+0.5) to prevent edge spawning issues
-- **Pre-game Freeze**: During countdown, players cannot move horizontally but can jump and look around freely
-- **Smooth Game Start**: Movement restriction automatically lifts when the game enters active state
-- **No Barriers**: Clean pillar design without barrier blocks that could cause swimming animation bugs
-
-### Combat System
 combat:
   kb_scalar_melee: 1.0
   kb_scalar_projectile: 1.15
@@ -168,161 +166,236 @@ combat:
 limits:
   max_ender_pearls_per_60s: 1
   tnt_terrain_damage: false
-### Game Variants
-- **Classic**: Standard gameplay with balanced loot
-- **Chaos Mode**: Increased TNT and dangerous items
-- **Casual Mode**: Safer items, no explosives
-- **Double Items**: Receive twice as many items
-- **Low Gravity**: Reduced fall damage and modified physics
+```
 
-## 🏗️ Arena Setup
+### `loot.yml` - Item Distribution
+```yaml
+tables:
+  default:
+    interval_seconds: 5
+    rolls_per_tick: 1
+    entries:
+      - id: "block_stone_8"
+        material: STONE
+        amount: 8
+        weight: 90
+        
+      - id: "snowball_3"
+        material: SNOWBALL
+        amount: 3
+        weight: 65
+        
+      - id: "ender_pearl"
+        material: ENDER_PEARL
+        amount: 1
+        weight: 4
+        
+      - id: "tnt"
+        material: TNT
+        amount: 1
+        weight: 6
 
-### Quick Setup
-1. Use `/tower setup wand` to get the setup tool
-2. Select the arena area with the wand
-3. Run `/tower setup create <arenaId>` to create the arena
-4. Use `/tower setup maxplayers <amount>` to add pillars
-5. Use `/tower setup spawn <1,2,3...>` to add pillar locations
-6. Run `/tower setup save` to save the configuration
+    modifiers:
+      chaos_mode:
+        weight_mult: 1.2
+        allow_tnt: true
+        allow_lava: true
+```
 
-### Manual Configuration
-Edit `arenas.yml` directly for advanced setups:
+### `arenas.yml` - Arena Definitions
+```yaml
 arenas:
-  my_arena:
-    world: "world"
-    center: [0, 100, 0]
-    pillar:
-      count: 12
-      pattern: "CIRCLE"  # CIRCLE or GRID
-      radius: 20
-      height: 40
-      size: "2x2"       # 1x1 or 2x2
-      top_block: STONE
-    void_y: 0
-    border_size: 100
-## 📊 API & Placeholders
+  classic_arena:
+    schematic: "classic_arena"
+    world: "towerclash_world"
+    spawns:
+      - x: 0, y: 65, z: 20
+      - x: 0, y: 65, z: -20
+      - x: 20, y: 65, z: 0
+      - x: -20, y: 65, z: 0
+    min_players: 2
+    max_players: 8
+    enabled: true
+```
 
-### PlaceholderAPI Support
-TowerClash provides extensive placeholder support:
+---
 
-| Placeholder | Description |
-|-------------|-------------|
-| `%towerclash_wins%` | Player's total wins |
-| `%towerclash_games%` | Player's total games |
-| `%towerclash_kills%` | Player's total kills |
-| `%towerclash_deaths%` | Player's total deaths |
-| `%towerclash_winrate%` | Player's win percentage |
-| `%towerclash_kd%` | Player's kill/death ratio |
-| `%towerclash_streak%` | Player's current win streak |
-| `%towerclash_best_streak%` | Player's best win streak |
-| `%towerclash_in_game%` | Whether player is in a game |
-| `%towerclash_arena%` | Current arena name |
+## 🎯 Commands & Permissions
 
-### Developer API
-// Get the main plugin instance
-TowerClash plugin = TowerClash.getInstance();
+### Player Commands
 
-// Access managers
-GameManager gameManager = plugin.getGameManager();
-StatsManager statsManager = plugin.getStatsManager();
-ArenaManager arenaManager = plugin.getArenaManager();
+| Command | Description | Permission |
+|---------|-------------|------------|
+| `/tower join [arena]` | Join a game (or quick-join) | `tower.play` |
+| `/tower leave` | Leave current game | `tower.play` |
+| `/tower stats [player]` | View statistics | `tower.play` |
+| `/tower private create` | Create private game | `tower.private` |
+| `/tower private invite <player>` | Invite to private game | `tower.private` |
+| `/tower private start` | Start private game | `tower.private` |
 
-// Check if player is in game
-boolean inGame = gameManager.isPlayerInGame(player);
+### Admin Commands
 
-// Get player statistics
-PlayerStats stats = statsManager.getPlayerStats(player.getUniqueId());
-## 🔌 Dependencies
+| Command | Description | Permission |
+|---------|-------------|------------|
+| `/tower wand` | Get selection tool | `tower.admin.wand` |
+| `/tower save <name>` | Save selected region | `tower.admin.save` |
+| `/tower reload` | Reload configs | `tower.admin.reload` |
+| `/tower start <arena>` | Force-start game | `tower.admin.start` |
+| `/tower stop <arena>` | Force-stop game | `tower.admin.stop` |
+| `/tower loot test <n>` | Simulate loot drops | `tower.admin.loot` |
 
-### Required
-- **Java 17+**
-- **PaperMC 1.13-1.21.8**
+---
 
-### Optional (Soft Dependencies)
-- **[Vault](https://github.com/MilkBowl/Vault)** - Economy integration and rewards
-- **[PlaceholderAPI](https://github.com/PlaceholderAPI/PlaceholderAPI)** - Placeholder support
-- **[WorldEdit](https://github.com/EngineHub/WorldEdit)** - Enhanced arena setup tools
-- **[ProtocolLib](https://github.com/dmulloy2/ProtocolLib)** - Advanced packet manipulation
+## 📊 Statistics & Placeholders
 
-## 🔨 Building
+### Database Tracking
 
-### Prerequisites
-- Java 17 JDK
-- Maven 3.6+
-- Git
+- **Wins** - Total victories
+- **Games Played** - Total matches
+- **Kills** - Total eliminations
+- **Deaths** - Times eliminated
+- **Current Streak** - Consecutive wins
+- **Best Streak** - Highest win streak
 
-### Build Steps
-# Clone the repository
-git clone https://github.com/yourusername/TowerClash.git
-cd TowerClash
+### PlaceholderAPI
 
-# Compile and package
-mvn clean package
+```
+%towerclash_wins%
+%towerclash_kills%
+%towerclash_deaths%
+%towerclash_kd%
+%towerclash_games%
+%towerclash_winrate%
+%towerclash_streak%
+%towerclash_best_streak%
+```
 
-# The compiled JAR will be in target/TowerClash-1.0.0.jar
-### Development Setup
-# Install to local Maven repository
-mvn clean install
+---
 
-# Run tests
-mvn test
+## 🔧 Advanced Features
 
-# Generate documentation
-mvn javadoc:javadoc
-## 📈 Performance
+### Vote System
 
-TowerClash is designed for optimal performance:
-- **Async Operations**: Database operations and heavy computations run asynchronously
-- **Efficient Packet Handling**: Batched updates for UI elements
-- **Memory Management**: Automatic cleanup of finished games
-- **Configurable Limits**: Maximum concurrent games and player limits
-- **Optimized Algorithms**: Efficient loot distribution and game state management
+Players vote before game starts:
+- **Chaos Mode** - More TNT, lava, dangerous items
+- **Double Items** - Receive 2 items per interval
+- **Low Gravity** - Reduced fall speed
+- **Short Pillars** - 50% pillar height
+
+### Private Games
+
+Create custom matches:
+1. `/tower private create`
+2. Receive private game control panel
+3. Invite friends: `/tower private invite <player>`
+4. Adjust settings (arena, modifiers)
+5. Start when ready
+
+### Worldborder Integration
+
+- Individual worldborder for each player during pre-game
+- Global shrinking border during Sudden Death
+- Configurable shrink rate and timing
+
+---
+
+## 🏗️ Technical Details
+
+### Arena Instancing System
+
+TowerClash uses **schematic-based void world instancing**:
+
+1. **On Game Start:**
+   - Schematic pastes at calculated position (256 blocks apart)
+   - Players teleport to relative spawn coordinates
+   - All blocks tracked for cleanup
+
+2. **During Game:**
+   - Player-placed blocks tracked separately
+   - Original schematic blocks protected from certain interactions
+
+3. **On Game End:**
+   - **Entire arena region deleted** (including player-placed blocks)
+   - Position marked as available for next game
+   - No reset needed - fresh paste every time
+
+### Performance
+
+- **Async database writes** - Non-blocking stat updates
+- **Efficient schematic pasting** - WorldEdit API optimization
+- **Memory management** - Arenas fully deleted after use
+- **Concurrent games** - Multiple arenas run independently
+
+### Dependencies
+
+**Required:**
+- WorldEdit or FastAsyncWorldEdit
+
+**Optional (Soft Dependencies):**
+- Vault - Economy rewards
+- PlaceholderAPI - Stat placeholders
+
+---
 
 ## 🐛 Troubleshooting
 
-### Common Issues
+### "WorldEdit/FAWE not found!"
+- Ensure WorldEdit or FastAsyncWorldEdit is installed
+- Check server log for plugin load errors
 
-**Q: Players can't join games**
-A: Check permissions (`tower.play`) and ensure arenas are properly configured.
+### Arena doesn't paste
+- Verify schematic file exists in `schematics/` folder
+- Check `arenas.yml` schematic name matches file name
+- Ensure void world has generated
 
-**Q: Items aren't being distributed**
-A: Verify loot table configuration in `loot.yml` and check console for errors.
+### Players fall through arena
+- Spawns may be set too low
+- Check spawn Y coordinates in `arenas.yml`
+- Ensure spawns are within schematic bounds
 
-**Q: Players spawn beside pillars instead of on top**
-A: This has been fixed in recent versions. Players now spawn centered at X+0.5, Y+1.0, Z+0.5 relative to the pillar block.
-
-**Q: Players can move during countdown**
-A: The movement freeze system prevents horizontal movement during pre-game. Ensure you're running the latest version.
-
-**Q: Swimming animation bug on pillars**
-A: The barrier system has been removed. Update to the latest version to fix this issue.
-
-**Q: Database errors**
-A: Ensure proper database configuration in `config.yml` and check file permissions.
-
-**Q: Performance issues**
-A: Reduce `max_concurrent_games` in config and optimize arena sizes.
-
-### Debug Mode
-Enable debug logging in your server configuration:
-# In your server's logging configuration
-loggers:
-  nl.dutchcoding.towerclash:
-    level: DEBUG
-## 🤝 Support
-
-- **Discord**: [Join our Discord](https://discord.gg/your-invite)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/TowerClash/issues)
-- **Wiki**: [GitHub Wiki](https://github.com/yourusername/TowerClash/wiki)
-- **Email**: support@dutchcoding.nl
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Credits
-
-- **Developer**: [Dutchwilco](https://github.com/dutchwilco)
-- **Organization**: [DutchCoding](https://dutchcoding.nl)
+### Items not dropping
+- Verify `loot.yml` is configured correctly
+- Check `game.yml` → `item_interval_seconds`
+- Test with `/tower loot test 100`
 
 ---
+
+## 📝 Migration Guide (Old System → Schematic System)
+
+If you're upgrading from the old pillar-based system:
+
+### What Changed?
+
+❌ **Old:** Arenas existed in main world, pillars generated dynamically  
+✅ **New:** Arenas saved as schematics, pasted into void world per-game
+
+### Migration Steps
+
+1. **Backup** your old `arenas.yml`
+2. Rebuild arenas in creative world
+3. Use `/tower wand` and `/tower save` to save schematics
+4. Configure spawns in new `arenas.yml` format
+5. Test thoroughly before enabling
+
+**Note:** Old and new systems are **incompatible** - choose one approach.
+
+---
+
+## 📦 Support & Contributing
+
+**Author:** Dutchwilco  
+**Version:** 1.4.0  
+
+For bug reports, feature requests, or contributions, contact me on discord.
+
+---
+
+## 📜 License
+
+Proprietary - All rights reserved by Dutchwilco
+
+---
+
+## 🎉 Credits
+
+Developed with ❤️ by Dutchwilco
