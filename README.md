@@ -1,7 +1,7 @@
 # 🎮 TowerClash - Advanced Minecraft PvP Minigame
 
-**Version:** 1.3.0  
-**Author:** wilcodwg  
+**Version:** 1.4.0  
+**Author:** Dutchwilco  
 **Platform:** PaperMC 1.16 - 1.21.4 | Java 21  
 
 ---
