@@ -19,7 +19,7 @@ A fast-paced PvP minigame for Paper servers where players spawn on isolated pill
 
 | Requirement | Version |
 |---|---|
-| Paper / Spigot | 1.20.1+ |
+| Paper / Spigot | 1.21.X |
 | Java | 17+ |
 | WorldEdit or FAWE | 7.x |
 
@@ -35,14 +35,14 @@ A fast-paced PvP minigame for Paper servers where players spawn on isolated pill
 ## Arena Setup
 
 ```
-/tower wand                         # Get a selection wand
+/tower wand                         
 ```
 Select the two corners of your arena with left and right click.
 ```
-/tower create <name>                # Create arena from selection
-/tower setminplayers <amount> <name># Set minimum players to start
-/tower save <name>                  # Save schematic + auto-detect pillar spawns
-/tower enable <name>                # Enable the arena
+/tower create <name>                
+/tower setminplayers <amount> <name>
+/tower save <name>                  
+/tower enable <name>                
 ```
 
 Pillars are detected automatically — they must be at least 10 blocks tall with 2 blocks of air above the top and 5 solid blocks below.
@@ -103,16 +103,6 @@ Aliases: `/tc`, `/towerclash`
 | `%towerclash_winrate%` | Win rate percentage |
 | `%towerclash_kd%` | Kill/death ratio |
 | `%towerclash_beststreak%` | Best kill streak |
-
-## Building from Source
-
-```bash
-git clone https://github.com/dutchwilco/TowerClash.git
-cd TowerClash
-mvn package
-```
-
-The compiled jar will be in `target/`.
 
 ## License
 
